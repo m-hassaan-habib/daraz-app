@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">Dashboard Overview</h2>
+
+<div class="row g-4 mb-4">
+  {% for label, value in totals.items() %}
+  <div class="col-md-4">
+    <div class="card shadow-sm rounded-4 p-3 text-center">
+      <h6 class="text-muted">{{ label.replace('_', ' ').title() }}</h6>
+      <h4 class="fw-bold">Rs {{ value | round(2) }}</h4>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="row g-4">
+  <div class="col-md-6">
+    <div class="card p-3 shadow-sm rounded-4">
+      <h5 class="mb-3">Revenue vs Deductions</h5>
+      <canvas id="revenuePie"></canvas>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card p-3 shadow-sm rounded-4">
+      <h5 class="mb-3">Fee Breakdown</h5>
+      <canvas id="feeBar"></canvas>
+    </div>
+  </div>
+</div>
+<div class="row g-4 mt-4">
+  <div class="col-md-6">
+    <div class="card p-3 shadow-sm rounded-4">
+      <h5 class="mb-3">Profit vs Total Cost</h5>
+      <canvas id="profitPie"></canvas>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card p-3 shadow-sm rounded-4">
+      <h5 class="mb-3">Revenue Breakdown</h5>
+      <canvas id="revenueBar"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.dashboardData = {{ totals | tojson }};
+</script>
+{% endblock %}

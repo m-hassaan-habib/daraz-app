@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">Product Cost Prices</h2>
+
+<form method="post" action="{{ url_for('products.update_cost') }}">
+  <table class="table table-hover bg-white rounded shadow-sm">
+    <thead class="table-light">
+      <tr>
+        <th>Product</th>
+        <th>SKU</th>
+        <th>Cost Price</th>
+        <th>Update</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in products %}
+      <tr>
+        <td>{{ p.product_name }}</td>
+        <td>{{ p.sku }}</td>
+        <td>
+          <input type="number" step="0.01" name="cost_price" value="{{ p.cost_price }}" class="form-control" required>
+          <input type="hidden" name="sku" value="{{ p.sku }}">
+        </td>
+        <td>
+          <button type="submit" class="btn btn-primary btn-sm rounded-pill">Save</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</form>
+{% endblock %}

@@ -1,0 +1,18 @@
+CREATE DATABASE IF NOT EXISTS daraz_db;
+USE daraz_db;
+
+CREATE TABLE IF NOT EXISTS transactions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_number VARCHAR(50),
+    fee_name VARCHAR(255),
+    amount FLOAT,
+    product_name TEXT,
+    sku VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS product_costs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sku VARCHAR(255) UNIQUE,
+    cost_price FLOAT DEFAULT 0
+);

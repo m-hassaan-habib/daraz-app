@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">Orders</h2>
+
+<table class="table table-bordered rounded shadow-sm bg-white">
+  <thead class="table-light">
+    <tr>
+      <th>Order #</th>
+      <th>Product</th>
+      <th>SKU</th>
+      <th>Revenue</th>
+      <th>Deductions</th>
+      <th>Profit</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for o in orders %}
+    <tr>
+      <td>{{ o.order_number }}</td>
+      <td>{{ o.product }}</td>
+      <td>{{ o.sku }}</td>
+      <td>Rs {{ o.revenue }}</td>
+      <td>Rs {{ o.deductions }}</td>
+      <td class="fw-bold {% if o.final_profit < 0 %}text-danger{% else %}text-success{% endif %}">
+        Rs {{ o.final_profit }}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">Upload CSV Report</h2>
+
+<form method="post" enctype="multipart/form-data" class="p-4 bg-white rounded shadow-sm">
+  <div class="mb-3">
+    <label for="formFile" class="form-label">Choose Daraz CSV file</label>
+    <input class="form-control" type="file" id="formFile" name="file" accept=".csv" required>
+  </div>
+  <button type="submit" class="btn btn-success rounded-pill">Upload</button>
+</form>
+{% endblock %}
