@@ -1,3 +1,9 @@
+blinker
+click
 Flask
+itsdangerous
+Jinja2
+MarkupSafe
+PyMySQL
 python-dotenv
-pymysql
+Werkzeug
