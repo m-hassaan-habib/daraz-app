@@ -77,6 +77,18 @@
           <span>Upload</span>
         </a>
       </li>
+      <li>
+        <a href="{{ url_for('auth.logout') }}"
+          class="inline-flex items-center space-x-2 px-4 py-2 rounded-md transition-colors
+          {% if request.endpoint == 'auth.logout' %}
+            bg-slate-900 text-white
+          {% else %}
+            text-slate-500 hover:text-slate-700
+          {% endif %}">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </a>
+      </li>
     </ul>
 
 

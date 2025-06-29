@@ -25,3 +25,26 @@ CREATE TABLE IF NOT EXISTS product_costs (
     sku VARCHAR(255) UNIQUE,
     cost_price FLOAT DEFAULT 0
 );
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(20) DEFAULT 'user',
+    shop_name VARCHAR(255),
+    shop_id INT UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE IF NOT EXISTS shops (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    shop_name VARCHAR(255) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE transactions ADD COLUMN shop_id INT;
+ALTER TABLE products ADD COLUMN shop_id INT;
+ALTER TABLE product_costs ADD COLUMN shop_id INT;
+ALTER TABLE products DROP INDEX product_name, ADD UNIQUE (product_name, shop_id);
