@@ -18,11 +18,19 @@ def orders_view():
 
     orders_data = []
     for order_num, items in grouped.items():
-        summary = calculate_order_summary(items)
+        product_name = items[0]["product_name"]
+
+        cursor.execute("SELECT cost_price FROM products WHERE product_name = %s", (product_name,))
+        cost_row = cursor.fetchone()
+        cost_price = cost_row["cost_price"] if cost_row else 0
+        
+        summary = calculate_order_summary(items, cost_price)
+        margin_percent = ((summary["final_profit"] / cost_price) * 100) if cost_price > 0 else 0
+
         orders_data.append({
             "order_number": order_num,
-            "product": items[0]["product_name"],
-            "sku": items[0]["sku"],
+            "product": product_name,
+            "margin_percent": margin_percent,
             **summary
         })
 

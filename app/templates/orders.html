@@ -1,31 +1,125 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 class="mb-4">Orders</h2>
+<main class="max-w-7xl mx-auto p-6 sm:p-10">
+  <h1 class="text-2xl font-extrabold mb-1">Orders</h1>
+  <p class="text-slate-600 mb-6">View and analyze your order profitability.</p>
 
-<table class="table table-bordered rounded shadow-sm bg-white">
-  <thead class="table-light">
-    <tr>
-      <th>Order #</th>
-      <th>Product</th>
-      <th>SKU</th>
-      <th>Revenue</th>
-      <th>Deductions</th>
-      <th>Profit</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for o in orders %}
-    <tr>
-      <td>{{ o.order_number }}</td>
-      <td>{{ o.product }}</td>
-      <td>{{ o.sku }}</td>
-      <td>Rs {{ o.revenue }}</td>
-      <td>Rs {{ o.deductions }}</td>
-      <td class="fw-bold {% if o.final_profit < 0 %}text-danger{% else %}text-success{% endif %}">
-        Rs {{ o.final_profit }}
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <table class="w-full border-collapse text-sm text-slate-900">
+    <thead>
+      <tr class="border-b border-slate-200">
+        <th class="text-left font-semibold py-3 pr-3">Order #</th>
+        <th class="text-left font-semibold py-3 pr-3">Product</th>
+        <th class="text-right font-semibold py-3 pr-3">Revenue</th>
+        <th class="text-right font-semibold py-3 pr-3">Deductions</th>
+        <th class="text-right font-semibold py-3 pr-3">Costs</th>
+        <th class="text-right font-semibold py-3 pr-3">Profit</th>
+        <th class="text-right font-semibold py-3 pr-3">Margin</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-200">
+      {% for o in orders %}
+      <tr class="group">
+        <td class="py-4 pr-3">{{ o.order_number }}</td>
+        <td class="py-4 pr-3 relative group max-w-xs">
+          <div class="font-semibold truncate">
+            {{ o.product.split(',')[0] }}
+          </div>
+          {% if o.sku %}
+            <div class="text-xs text-slate-500">SKU: {{ o.sku }}</div>
+          {% endif %}
+          <div class="absolute z-10 hidden group-hover:block bg-white border border-slate-200 text-sm text-slate-800 p-2 rounded shadow-lg w-64 bottom-full mb-1">
+            {{ o.product }}
+          </div>
+        </td>
+
+        <td class="py-4 pr-3 text-right">Rs {{ o.revenue | default(0) | round(1)  }}</td>
+        <td class="py-4 pr-3 text-right text-red-600">Rs {{ o.deductions | default(0) | round(1)  }}</td>
+        <td class="py-4 pr-3 text-right text-amber-600">Rs {{ o.cost_price | default(0) | round(1)  }}</td>
+        <td class="py-4 pr-3 text-right text-green-600 font-semibold">Rs {{ o.final_profit | default(0) | round(1)  }}</td>
+        <td class="py-4 pr-3 text-right">
+          <span class="inline-block bg-green-600 text-white text-xs font-semibold rounded-full px-3 py-1">
+            {{ o.margin_percent | default(0) | round(1)  }}%
+          </span>
+        </td>
+        <td class="py-4 pr-3 text-right">
+          <button
+            type="button"
+            class="toggle-details text-slate-600 hover:text-slate-900 focus:outline-none"
+            data-target="details-{{ loop.index }}"
+          >
+            <i class="fas fa-plus-circle"></i>
+          </button>
+        </td>
+      </tr>
+      <tr id="details-{{ loop.index }}" class="hidden bg-slate-50">
+        <td colspan="8" class="p-4">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm text-slate-900">
+            <div>
+              <div class="font-semibold mb-2">Income</div>
+              <div class="flex justify-between mb-1">
+                <span>Product Price</span>
+                <span class="font-semibold">Rs {{ o.product_price | default(0) | round(1)  }}</span>
+              </div>
+              <div class="flex justify-between mb-1">
+                <span>Shipping Paid</span>
+                <span>Rs {{ o.shipping_fee_paid | default(0) | round(1)  }}</span>
+              </div>
+              <div class="flex justify-between font-semibold">
+                <span>Total Revenue</span>
+                <span>Rs {{ o.revenue | default(0) | round(1)  }}</span>
+              </div>
+            </div>
+            <div>
+              <div class="font-semibold mb-2">Deductions</div>
+              {% for f in o.deduction_breakdown %}
+              <div class="flex justify-between mb-1">
+                <span>{{ f.name }}</span>
+                <span class="text-red-600">-Rs {{ f.amount | default(0) | round(1)  }}</span>
+              </div>
+              {% endfor %}
+              <div class="flex justify-between font-semibold">
+                <span>Total Deductions</span>
+                <span class="text-red-600">-Rs {{ o.deductions | default(0) | round(1)  }}</span>
+              </div>
+            </div>
+            <div>
+              <div class="font-semibold mb-2">Costs</div>
+              <div class="flex justify-between mb-1">
+                <span>Handling</span>
+                <span class="text-amber-600">-Rs {{ o.handling_fee | default(0) | round(1)  }}</span>
+              </div>
+              <div class="flex justify-between mb-1">
+                <span>Packing</span>
+                <span class="text-amber-600">-Rs {{ o.packing_fee | default(0) | round(1)  }}</span>
+              </div>
+              <div class="flex justify-between mb-1">
+                <span>Logistics</span>
+                <span class="text-amber-600">-Rs {{ o.logistics_fee | default(0) | round(1)  }}</span>
+              </div>
+              <div class="flex justify-between font-semibold">
+                <span>Total Costs</span>
+                <span class="text-amber-600">-Rs {{ o.total_costs | default(0) | round(1)  }}</span>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</main>
+
+<script>
+  document.querySelectorAll(".toggle-details").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const targetId = btn.getAttribute("data-target");
+      const target = document.getElementById(targetId);
+      const icon = btn.querySelector("i");
+      target.classList.toggle("hidden");
+      icon.classList.toggle("fa-plus-circle");
+      icon.classList.toggle("fa-minus-circle");
+    });
+  });
+</script>
 {% endblock %}

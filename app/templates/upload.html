@@ -1,12 +1,80 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 class="mb-4">Upload CSV Report</h2>
+<main class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10">
+  <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Upload CSV Report</h1>
+  <p class="text-slate-500 mb-8 text-base max-w-2xl">
+    Upload your order data CSV file to start analyzing profits and performance.
+  </p>
 
-<form method="post" enctype="multipart/form-data" class="p-4 bg-white rounded shadow-sm">
-  <div class="mb-3">
-    <label for="formFile" class="form-label">Choose Daraz CSV file</label>
-    <input class="form-control" type="file" id="formFile" name="file" accept=".csv" required>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <section class="border border-slate-200 rounded-lg p-6 max-w-xl w-full" aria-labelledby="csv-upload-title">
+      <h2 id="csv-upload-title" class="text-xl font-extrabold text-slate-900 mb-2">CSV File Upload</h2>
+      <p class="text-slate-500 mb-6 text-sm">Upload your CSV file below:</p>
+      <form method="post" enctype="multipart/form-data" action="{{ url_for('upload.upload_file') }}">
+        <section
+          class="border border-slate-200 rounded-lg p-6 max-w-xl w-full"
+          aria-labelledby="csv-upload-title"
+        >
+          <h2 id="csv-upload-title" class="text-xl font-extrabold text-slate-900 mb-2">
+            CSV File Upload
+          </h2>
+          <p class="text-slate-500 mb-6 text-sm">
+            Drag and drop your CSV file or click to select
+          </p>
+
+          <label
+            for="file-upload"
+            class="flex flex-col items-center justify-center border-2 border-dashed border-slate-300 rounded-lg h-48 cursor-pointer hover:border-slate-400 transition-colors p-4 m-2"
+          >
+            <i class="fas fa-upload text-slate-400 text-3xl mb-3"></i>
+            <span class="font-semibold text-slate-900 mb-1">Drop your CSV file here</span>
+            <span class="text-slate-500 text-xs mb-4">or click to browse</span>
+
+            <input
+              id="file-upload"
+              type="file"
+              name="file"
+              accept=".csv"
+              required
+              class="hidden"
+              onchange="document.getElementById('selected-filename').innerText = this.files[0]?.name || 'No file selected';"
+            />
+            <span id="selected-filename" class="mt-2 text-sm text-slate-500">No file selected</span>
+          </label>
+
+          <div class="mt-6 text-center">
+            <button
+              type="submit"
+              class="mt-auto bg-white border border-slate-300 rounded-md px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400"
+            >
+              Upload
+            </button>
+          </div>
+        </section>
+      </form>
+    </section>
+
+    <section class="border border-slate-200 rounded-lg p-6 max-w-xl w-full" aria-labelledby="expected-csv-title">
+      <h2 id="expected-csv-title" class="text-xl font-extrabold text-slate-900 mb-2 flex items-center space-x-2">
+        <i class="fas fa-file-alt text-slate-700"></i>
+        <span>Expected CSV Format</span>
+      </h2>
+      <p class="text-slate-500 mb-6 text-sm max-w-md">Your CSV should contain the following columns</p>
+      <ul class="space-y-1 text-slate-600 text-sm max-w-md mb-6">
+        <li class="flex items-center space-x-2"><i class="fas fa-check-circle text-green-500"></i><span>Order Number</span></li>
+        <li class="flex items-center space-x-2"><i class="fas fa-check-circle text-green-500"></i><span>Fee Name</span></li>
+        <li class="flex items-center space-x-2"><i class="fas fa-check-circle text-green-500"></i><span>Amount</span></li>
+        <li class="flex items-center space-x-2"><i class="fas fa-check-circle text-green-500"></i><span>Product Name</span></li>
+        <li class="flex items-center space-x-2"><i class="fas fa-check-circle text-green-500"></i><span>Product Price Paid by Buyer</span></li>
+        <li class="flex items-center space-x-2"><i class="fas fa-check-circle text-green-500"></i><span>SKU (optional)</span></li>
+        <li class="flex items-center space-x-2"><i class="fas fa-check-circle text-green-500"></i><span>Any additional fee columns</span></li>
+      </ul>
+      <pre class="bg-slate-100 text-slate-700 text-xs rounded-md p-4 max-w-md overflow-x-auto font-mono">
+Order Number,Fee Name,Amount,Product Name,Product Price Paid by Buyer,SKU
+12345,Product Price,500,T-shirt,500,TS001
+12345,Commission Fee,-50,,,
+      </pre>
+    </section>
   </div>
-  <button type="submit" class="btn btn-success rounded-pill">Upload</button>
-</form>
+</main>
 {% endblock %}

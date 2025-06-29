@@ -22,11 +22,19 @@ def dashboard_view():
         "handling_fee": 0,
         "packing_fee": 0,
         "logistics_fee": 0,
+        "gross_profit": 0,
         "final_profit": 0
     }
 
+
     for order_rows in grouped.values():
-        summary = calculate_order_summary(order_rows)
+        product_name = order_rows[0]["product_name"]
+
+        cursor.execute("SELECT cost_price FROM products WHERE product_name = %s", (product_name,))
+        row = cursor.fetchone()
+        cost_price = row["cost_price"] if row else 0
+
+        summary = calculate_order_summary(order_rows, cost_price)
         for key in totals:
             totals[key] += summary[key]
 

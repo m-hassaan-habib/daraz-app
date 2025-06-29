@@ -7,33 +7,32 @@ products_bp = Blueprint("products", __name__, url_prefix="/products")
 def product_list():
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT DISTINCT sku, product_name FROM transactions")
+
+    cursor.execute("""
+        SELECT 
+            p.product_name,
+            p.cost_price,
+            COUNT(DISTINCT t.order_number) AS total_orders,
+            SUM(CASE WHEN t.fee_name = 'Item Price' THEN t.amount ELSE 0 END) AS revenue,
+            SUM(CASE WHEN t.fee_name = 'Item Price' THEN (t.amount - IFNULL(p.cost_price, 0)) ELSE 0 END) AS profit
+        FROM products p
+        LEFT JOIN transactions t ON p.product_name = t.product_name
+        GROUP BY p.product_name, p.cost_price
+        ORDER BY p.product_name
+    """)
     products = cursor.fetchall()
+    return render_template("products.html", products=products)
 
-    result = []
-    for p in products:
-        cursor.execute("SELECT cost_price FROM product_costs WHERE sku = %s", (p["sku"],))
-        cost = cursor.fetchone()
-        result.append({
-            "sku": p["sku"],
-            "product_name": p["product_name"],
-            "cost_price": cost["cost_price"] if cost else 0
-        })
 
-    return render_template("products.html", products=result)
 
 
 @products_bp.route("/update", methods=["POST"])
 def update_cost():
-    sku = request.form["sku"]
-    cost_price = float(request.form["cost_price"])
+    idx = request.form.get("row_index")
+    product_name = request.form.get(f"product_name_{idx}")
+    cost_price = float(request.form.get(f"cost_price_{idx}"))
+
     db = get_db()
     cursor = db.cursor()
-
-    cursor.execute("SELECT 1 FROM product_costs WHERE sku = %s", (sku,))
-    if cursor.fetchone():
-        cursor.execute("UPDATE product_costs SET cost_price = %s WHERE sku = %s", (cost_price, sku))
-    else:
-        cursor.execute("INSERT INTO product_costs (sku, cost_price) VALUES (%s, %s)", (sku, cost_price))
-
+    cursor.execute("UPDATE products SET cost_price = %s WHERE product_name = %s", (cost_price, product_name))
     return redirect(url_for("products.product_list"))
