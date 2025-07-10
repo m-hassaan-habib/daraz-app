@@ -18,15 +18,30 @@ def orders_view():
     page = int(request.args.get("page", 1))
     per_page = 20
     offset = (page - 1) * per_page
+    q = request.args.get("q", "").strip()
 
-    cursor.execute(
-        "SELECT * FROM transactions WHERE shop_id = %s ORDER BY order_number LIMIT %s OFFSET %s",
-        (shop_id, per_page, offset)
-    )
+    query = "SELECT * FROM transactions WHERE shop_id = %s"
+    params = [shop_id]
+
+    if q:
+        query += " AND (order_number LIKE %s OR product_name LIKE %s)"
+        like_q = f"%{q}%"
+        params.extend([like_q, like_q])
+
+    query += " ORDER BY order_number LIMIT %s OFFSET %s"
+    params.extend([per_page, offset])
+
+    cursor.execute(query, params)
     rows = cursor.fetchall()
 
-    cursor.execute("SELECT COUNT(DISTINCT order_number) AS count FROM transactions WHERE shop_id = %s", (shop_id,))
+    count_query = "SELECT COUNT(DISTINCT order_number) AS count FROM transactions WHERE shop_id = %s"
+    count_params = [shop_id]
 
+    if q:
+        count_query += " AND (order_number LIKE %s OR product_name LIKE %s)"
+        count_params.extend([like_q, like_q])
+
+    cursor.execute(count_query, count_params)
     row = cursor.fetchone()
     total_orders = row["count"] if row else 0
 
@@ -59,7 +74,15 @@ def orders_view():
             **summary
         })
 
-    return render_template("orders.html", orders=orders_data, page=page, total_pages=total_pages, start_page=start_page, end_page=end_page)
+    return render_template(
+        "orders.html",
+        orders=orders_data,
+        page=page,
+        total_pages=total_pages,
+        start_page=start_page,
+        end_page=end_page,
+        q=q
+    )
 
 
 @orders_bp.route("/delete/<order_number>", methods=["POST"])
