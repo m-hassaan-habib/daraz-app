@@ -4,7 +4,7 @@ from app.utils.fee_calculator import calculate_order_summary
 from collections import defaultdict
 from app.decorators import login_required
 from app.auth.auth import current_user
-
+from flask import redirect, url_for, flash, request
 
 orders_bp = Blueprint("orders", __name__, url_prefix="/orders")
 
@@ -15,12 +15,24 @@ def orders_view():
     cursor = db.cursor()
     shop_id = current_user()["shop_id"]
 
-    # Only fetch orders for the current user's shop
+    page = int(request.args.get("page", 1))
+    per_page = 20
+    offset = (page - 1) * per_page
+
     cursor.execute(
-        "SELECT * FROM transactions WHERE shop_id = %s ORDER BY order_number",
-        (shop_id,)
+        "SELECT * FROM transactions WHERE shop_id = %s ORDER BY order_number LIMIT %s OFFSET %s",
+        (shop_id, per_page, offset)
     )
     rows = cursor.fetchall()
+
+    cursor.execute("SELECT COUNT(DISTINCT order_number) AS count FROM transactions WHERE shop_id = %s", (shop_id,))
+
+    row = cursor.fetchone()
+    total_orders = row["count"] if row else 0
+
+    total_pages = (total_orders + per_page - 1) // per_page
+    start_page = max(1, page - 2)
+    end_page = min(total_pages, page + 2)
 
     grouped = defaultdict(list)
     for row in rows:
@@ -47,4 +59,17 @@ def orders_view():
             **summary
         })
 
-    return render_template("orders.html", orders=orders_data)
+    return render_template("orders.html", orders=orders_data, page=page, total_pages=total_pages, start_page=start_page, end_page=end_page)
+
+
+@orders_bp.route("/delete/<order_number>", methods=["POST"])
+@login_required
+def delete_order(order_number):
+    db = get_db()
+    cursor = db.cursor()
+    shop_id = current_user()["shop_id"]
+
+    cursor.execute("DELETE FROM transactions WHERE order_number = %s AND shop_id = %s", (order_number, shop_id))
+    db.commit()
+    flash(f"Order {order_number} deleted successfully", "success")
+    return redirect(url_for("orders.orders_view"))

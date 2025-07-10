@@ -50,7 +50,15 @@
           >
             <i class="fas fa-plus-circle"></i>
           </button>
+
+          <form method="POST" action="{{ url_for('orders.delete_order', order_number=o.order_number) }}"
+                onsubmit="return confirm('Are you sure you want to delete this order?');">
+            <button type="submit" class="text-red-600 hover:text-red-900 focus:outline-none pt-2">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </form>
         </td>
+
       </tr>
       <tr id="details-{{ loop.index }}" class="hidden bg-slate-50">
         <td colspan="8" class="p-4">
@@ -108,6 +116,38 @@
       {% endfor %}
     </tbody>
   </table>
+
+<div class="mt-6 flex justify-center items-center gap-1 text-sm text-gray-700" style="font-size: 101%;">
+
+  {% if page > 1 %}
+    <a href="{{ url_for('orders.orders_view', page=1) }}" class="px-2 py-1 rounded hover:bg-[#0f172a] hover:text-white">&laquo;</a>
+    <a href="{{ url_for('orders.orders_view', page=page-1) }}" class="px-2 py-1 rounded hover:bg-[#0f172a] hover:text-white">&lsaquo;</a>
+  {% endif %}
+
+  {% if page > 3 %}
+    <a href="{{ url_for('orders.orders_view', page=1) }}" class="px-3 py-1 rounded hover:bg-[#0f172a] hover:text-white">1</a>
+    <span class="px-2">…</span>
+  {% endif %}
+
+  {% for p in range(start_page, end_page + 1) %}
+    <a href="{{ url_for('orders.orders_view', page=p) }}"
+       class="px-3 py-1 rounded-full transition shadow-sm {{ 'bg-[#0f172a] text-white' if p == page else 'hover:bg-[#0f172a] hover:text-white' }}">
+       {{ p }}
+    </a>
+  {% endfor %}
+
+  {% if page < total_pages - 2 %}
+    <span class="px-2">…</span>
+    <a href="{{ url_for('orders.orders_view', page=total_pages) }}" class="px-3 py-1 rounded hover:bg-[#0f172a] hover:text-white">{{ total_pages }}</a>
+  {% endif %}
+
+  {% if page < total_pages %}
+    <a href="{{ url_for('orders.orders_view', page=page+1) }}" class="px-2 py-1 rounded hover:bg-[#0f172a] hover:text-white">&rsaquo;</a>
+    <a href="{{ url_for('orders.orders_view', page=total_pages) }}" class="px-2 py-1 rounded hover:bg-[#0f172a] hover:text-white">&raquo;</a>
+  {% endif %}
+
+</div>
+
 </main>
 
 <script>
