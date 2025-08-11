@@ -11,12 +11,12 @@
         name="q" 
         value="{{ q or '' }}" 
         placeholder="Search order number or product" 
-        class="w-full px-4 py-2 pl-3 pr-8 rounded-full border border-slate-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-700"
+        class="w-full text-dark px-4 py-2 pl-3 pr-8 rounded-full border border-slate-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-700"
       >
 
       {% if q %}
         <a href="{{ url_for('orders.orders_view') }}" 
-          class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-800 text-sm font-bold">&times;</a>
+          class="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-dark text-sm font-bold">&times;</a>
       {% endif %}
     </div>
 

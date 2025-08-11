@@ -9,12 +9,12 @@ def calculate_handling_fee(product_price):
         return 60
 
 def calculate_order_summary(order_rows, cost_price=0):
-    product_price = 0
-    shipping_paid = 0
-    negative_fees = 0
+    product_price = 0.0
+    shipping_paid = 0.0
+    negative_fees = 0.0
 
     for row in order_rows:
-        amount = row["amount"]
+        amount = float(row["amount"])
         fee_name = (row.get("fee_name") or "").lower().strip()
 
         if "product price paid by buyer" in fee_name:
@@ -26,11 +26,12 @@ def calculate_order_summary(order_rows, cost_price=0):
 
     revenue = product_price + shipping_paid
     handling_fee = calculate_handling_fee(product_price)
-    packing_fee = 10
-    logistics_fee = 5
+    packing_fee = 10.0
+    logistics_fee = 5.0
 
-    gross_profit = revenue - negative_fees - handling_fee - packing_fee - logistics_fee
-    final_profit = gross_profit - cost_price
+    total_costs = handling_fee + packing_fee + logistics_fee  # NEW
+    gross_profit = revenue - negative_fees - total_costs
+    final_profit = gross_profit - float(cost_price or 0)
 
     return {
         "product_price": product_price,
@@ -40,7 +41,8 @@ def calculate_order_summary(order_rows, cost_price=0):
         "handling_fee": handling_fee,
         "packing_fee": packing_fee,
         "logistics_fee": logistics_fee,
-        "cost_price": cost_price,
+        "total_costs": total_costs,
+        "cost_price": float(cost_price or 0),
         "gross_profit": gross_profit,
         "final_profit": final_profit
     }

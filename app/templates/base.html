@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -23,85 +24,106 @@
 </head>
 <body class="bg-white text-slate-900">
 
-<header class="border-b border-slate-200">
-  <nav class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex items-center justify-between h-16">
-    <div class="font-semibold text-slate-900 text-lg leading-6">
-      <a href="{{ url_for('dashboard.dashboard_view') }}">Order Analytics</a>
-    </div>
-    <ul class="flex items-center space-x-4 text-sm font-medium">
-      <li>
-        <a href="{{ url_for('dashboard.dashboard_view') }}"
-          class="inline-flex items-center space-x-2 px-4 py-2 rounded-md transition-colors
-          {% if request.endpoint == 'dashboard.dashboard_view' %}
-            bg-slate-900 text-white
-          {% else %}
-            text-slate-500 hover:text-slate-700
-          {% endif %}">
-          <i class="fas fa-chart-bar text-base"></i>
-          <span>Dashboard</span>
-        </a>
-      </li>
-      <li>
-        <a href="{{ url_for('orders.orders_view') }}"
-          class="inline-flex items-center space-x-2 px-4 py-2 rounded-md transition-colors
-          {% if request.endpoint == 'orders.orders_view' %}
-            bg-slate-900 text-white
-          {% else %}
-            text-slate-500 hover:text-slate-700
-          {% endif %}">
-          <i class="fas fa-shopping-cart text-base"></i>
-          <span>Orders</span>
-        </a>
-      </li>
-      <li>
-        <a href="{{ url_for('products.product_list') }}"
-          class="inline-flex items-center space-x-2 px-4 py-2 rounded-md transition-colors
-          {% if request.endpoint == 'products.product_list' %}
-            bg-slate-900 text-white
-          {% else %}
-            text-slate-500 hover:text-slate-700
-          {% endif %}">
-          <i class="fas fa-cube text-base"></i>
-          <span>Products</span>
-        </a>
-      </li>
-      <li>
-        <a href="{{ url_for('upload.upload_file') }}"
-          class="inline-flex items-center space-x-2 px-4 py-2 rounded-md transition-colors
-          {% if request.endpoint == 'upload.upload_file' %}
-            bg-slate-900 text-white
-          {% else %}
-            text-slate-500 hover:text-slate-700
-          {% endif %}">
-          <i class="fas fa-upload"></i>
-          <span>Upload</span>
-        </a>
-      </li>
-      <li>
-        <a href="{{ url_for('auth.logout') }}"
-          class="inline-flex items-center space-x-2 px-4 py-2 rounded-md transition-colors
-          {% if request.endpoint == 'auth.logout' %}
-            bg-slate-900 text-white
-          {% else %}
-            text-slate-500 hover:text-slate-700
-          {% endif %}">
-          <i class="fas fa-sign-out-alt"></i>
-          <span>Logout</span>
-        </a>
-      </li>
-    </ul>
+  <header class="border-b border-slate-200">
+    <nav class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex items-center justify-between h-16">
+      <div class="font-semibold text-slate-900 text-lg leading-6">
+        <a href="{{ url_for('dashboard.dashboard_view') }}">Order Analytics</a>
+      </div>
+      <ul class="flex items-center space-x-4 text-sm font-medium">
+        <li>
+          <a href="{{ url_for('dashboard.dashboard_view') }}"
+            class="inline-flex items-center space-x-2 px-4 py-2 rounded-md transition-colors
+            {% if request.endpoint == 'dashboard.dashboard_view' %}
+              bg-slate-900 text-white
+            {% else %}
+              text-slate-500 hover:text-slate-700
+            {% endif %}">
+            <i class="fas fa-chart-bar text-base"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="{{ url_for('orders.orders_view') }}"
+            class="inline-flex items-center space-x-2 px-4 py-2 rounded-md transition-colors
+            {% if request.endpoint == 'orders.orders_view' %}
+              bg-slate-900 text-white
+            {% else %}
+              text-slate-500 hover:text-slate-700
+            {% endif %}">
+            <i class="fas fa-shopping-cart text-base"></i>
+            <span>Orders</span>
+          </a>
+        </li>
+        <li>
+          <a href="{{ url_for('products.product_list') }}"
+            class="inline-flex items-center space-x-2 px-4 py-2 rounded-md transition-colors
+            {% if request.endpoint == 'products.product_list' %}
+              bg-slate-900 text-white
+            {% else %}
+              text-slate-500 hover:text-slate-700
+            {% endif %}">
+            <i class="fas fa-cube text-base"></i>
+            <span>Products</span>
+          </a>
+        </li>
+        <li>
+          <a href="{{ url_for('upload.upload_file') }}"
+            class="inline-flex items-center space-x-2 px-4 py-2 rounded-md transition-colors
+            {% if request.endpoint == 'upload.upload_file' %}
+              bg-slate-900 text-white
+            {% else %}
+              text-slate-500 hover:text-slate-700
+            {% endif %}">
+            <i class="fas fa-upload"></i>
+            <span>Upload</span>
+          </a>
+        </li>
+        <li>
+          <a href="{{ url_for('auth.logout') }}"
+            class="inline-flex items-center space-x-2 px-4 py-2 rounded-md transition-colors
+            {% if request.endpoint == 'auth.logout' %}
+              bg-slate-900 text-white
+            {% else %}
+              text-slate-500 hover:text-slate-700
+            {% endif %}">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </a>
+        </li>
+        <li>
+          <button onclick="toggleNightMode()" class="inline-flex items-center space-x-2 px-4 py-2 rounded-md transition-colors" title="Toggle Night Mode">
+            <i id="night-mode-icon" class="fas fa-moon text-lg"></i>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </header>
 
 
-  </nav>
-</header>
+  <div>
+    {% block content %}{% endblock %}
+  </div>
 
-
-<div>
-  {% block content %}{% endblock %}
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+  <script>
+    function toggleNightMode() {
+      document.body.classList.toggle('night-mode');
+      const icon = document.getElementById('night-mode-icon');
+      if (document.body.classList.contains('night-mode')) {
+        icon.classList.remove('fa-moon');
+        icon.classList.add('fa-sun');
+      } else {
+        icon.classList.remove('fa-sun');
+        icon.classList.add('fa-moon');
+      }
+      localStorage.setItem('nightMode', document.body.classList.contains('night-mode'));
+    }
+    if (localStorage.getItem('nightMode') === 'true') {
+      document.body.classList.add('night-mode');
+      document.getElementById('night-mode-icon').classList.remove('fa-moon');
+      document.getElementById('night-mode-icon').classList.add('fa-sun');
+    }
+  </script>
 </body>
 </html>
