@@ -1,2 +1,6 @@
 *.cpython-313.pyc
 *.csv
+.DS_Store
+*.pyc
+__pycache__/
+uploads/
